@@ -1,0 +1,204 @@
+:root {
+    --primary: #4a90e2;
+    --primary-light: #e8f2ff;
+    --text: #333;
+    --text-light: #666;
+    --border: #ddd;
+    --bg: #f9f9f9;
+    --white: #fff;
+    --danger: #e74c3c;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.title {
+    width: 100%;
+    max-width: 500px;
+    padding: 30px;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-top: 30px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--text);
+    font-weight: 600;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+button {
+    padding: 12px 20px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.filter-buttons button {
+    padding: 8px 16px;
+    background: var(--white);
+    color: var(--text-light);
+    border: 1px solid var(--border);
+    font-size: 14px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex: 0 0 auto;
+}
+
+.filter-buttons button.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+ul {
+    list-style: none;
+}
+
+.taskmap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.task-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.checkbox {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.task-text {
+    color: var(--text);
+    flex: 1;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
+.task-text.completed {
+    text-decoration: line-through;
+    color: var(--text-light);
+}
+
+.del {
+    color: var(--text);
+    background: none;
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stats {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.stats p {
+    color: var(--text-light);
+    font-size: 14px;
+    padding: 10px;
+    background: var(--primary-light);
+    border-radius: 4px;
+    display: inline-block;
+}
+
+@media (max-width: 600px) {
+    .title {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .input-area {
+        flex-direction: column;
+    }
+
+    .filter-buttons {
+        gap: 6px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding: 0 5px;
+    }
+
+    .filter-buttons button {
+        flex: 0 0 auto;
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+}
