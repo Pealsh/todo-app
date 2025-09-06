@@ -1,28 +1,56 @@
-import { useState, useMemo } from "react";
+import {useState, useMemo, useEffect} from "react";
 import './App.css';
 
 type Task = {
     text: string;
+    category: string;
+    priority: number;
     done: boolean;
 };
 
 type FilterType = 'all' | 'active' | 'completed';
 
 function App() {
-    const [tasks, setTasks] = useState<Task[]>([]);
+    const initializeTasks = (): Task[] => {
+        try {
+            const savedtasks = localStorage.getItem("todotasks");
+            return savedtasks ? JSON.parse(savedtasks) : [];
+        } catch (error) {
+            console.error('読み込みエラー', error);
+            return [];
+        }
+
+    };
+    const [tasks, setTasks] = useState<Task[]>(initializeTasks);
     const [input, setInput] = useState("");
     const [filter, setFilter] = useState<FilterType>('all');
+    const [selectedCategory, setSelectedCategory] = useState('仕事');
+    const [selectedPriority, setSelectedPriority] = useState(2);
 
+    useEffect(() => {
+        try {
+            localStorage.setItem("todotasks", JSON.stringify(tasks));
+        } catch (error) {
+            console.log(error);
+        }
+    }, [tasks]);
     //add
     const addTask = () => {
         if (input.trim() === "") return;
-        setTasks([...tasks, { text: input, done: false }]);
+        setTasks([...tasks, { text: input, done: false, category:selectedCategory, priority:selectedPriority}]);
         setInput("");
     };
 
     //del
     const deleteTask = (index: number) => {
         setTasks(tasks.filter((_, i) => i !== index));
+    };
+
+    //delall
+    const deleteAllTasks = () => {
+        if (window.confirm('全部消すの？')) {
+            setTasks([])
+        }
     };
 
     //toggle
@@ -34,16 +62,18 @@ function App() {
 
     //filter
     const filteredTasks = useMemo(() => {
-        switch (filter) {
-            case 'active':
-                return tasks.filter(task => !task.done);
-            case 'completed':
-                return tasks.filter(task => task.done);
-            case 'all':
-            default:
-                return tasks;
+        if (filter === 'active') {
+            return tasks.filter(task => !task.done);
+        } else if (filter === 'completed') {
+            return tasks.filter(task => task.done);
+        } else {
+            return tasks;
         }
     }, [tasks, filter]);
+
+    //category
+
+    //priority
 
     //statistics
     const stats = {
@@ -55,14 +85,46 @@ function App() {
     return (
         <div className="title">
             <h1>ToDo App</h1>
-        <div className="input-area">
-            <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder='タスクを入力'
-            />
-            <button onClick={addTask}>タスクを追加</button>
-        </div>
+            <div className="input-area">
+                <div className="input-row">
+                    <input
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder='タスクを入力'
+                    />
+                    <button onClick={addTask}>タスクを追加</button>
+                </div>
+
+                <div className="options-row">
+                    <div className="category-section">
+                        <label>カテゴリー:</label>
+                        <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                            <option value="仕事">仕事</option>
+                            <option value="プライベート">プライベート</option>
+                            <option value="買い物">買い物</option>
+                            <option value="その他">その他</option>
+                        </select>
+                    </div>
+
+                    <div className="priority-section">
+                        <label>優先度:</label>
+                        <div className="priority-buttons">
+                            <button
+                                className={selectedPriority === 3 ? 'active' : ''}
+                                onClick={() => setSelectedPriority(3)}>高
+                            </button>
+                            <button
+                                className={selectedPriority === 2 ? 'active' : ''}
+                                onClick={() => setSelectedPriority(2)}>中
+                            </button>
+                            <button
+                                className={selectedPriority === 1 ? 'active' : ''}
+                                onClick={() => setSelectedPriority(1)}>低
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* filterbutton */}
             <div className="filter-buttons">
@@ -90,6 +152,14 @@ function App() {
                 {filteredTasks.map((task) => {
                     const originalIndex = tasks.findIndex(t => t === task);
 
+                    const getPriority = (priority: number) => {
+                        if (priority ===3) return {label: '高', color: 'red'};
+                        if (priority ===2) return {label: '中', color: '#FFC800'};
+                        if (priority ===1) return {label: '低', color: 'gray'};
+                        return {label: '低', color: 'gray'};
+                    };
+
+                    const priorityInfo = getPriority(task.priority);
                     return (
                         <li key={originalIndex} className="taskmap">
                             <div className="task-content">
@@ -109,10 +179,25 @@ function App() {
                                     )}
                                 </div>
                                 <span
+                                className="priority"
+                                style={{
+                                    backgroundColor: priorityInfo.color,
+                                    color: 'white',
+                                    padding: '2px 8px',
+                                    borderRadius: '4px',
+                                    fontSize: '12px',
+                                    marginRight: '8px'
+                                }}>
+                                    {priorityInfo.label}
+                                </span>
+                                <span
                                     className={`task-text ${task.done ? 'completed' : ''}`}
                                 >
                   {task.text}
                 </span>
+                                <span className="categorydisp" style={{ marginLeft: 'auto', color: '#666'}}>
+                                    {task.category}
+                                </span>
                             </div>
                             <button className="del" onClick={() => deleteTask(originalIndex)} >
                                 ×
@@ -122,12 +207,13 @@ function App() {
                 })}
             </ul>
 
-            {/* 統計表示 */}
+            {/* delall */}
             {tasks.length > 0 && (
                 <div className="stats">
-                    <p>表示中: {filteredTasks.length} / 全体: {stats.total}</p>
+                    <p className="delallbut" onClick={deleteAllTasks}>delete all</p>
                 </div>
             )}
+
         </div>
     );
 }

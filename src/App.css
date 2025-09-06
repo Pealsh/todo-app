@@ -1,12 +1,12 @@
 :root {
-    --primary: #4a90e2;
-    --primary-light: #e8f2ff;
+    --primary: #585b65;
+    --primary-light: #dde2e8;
     --text: #333;
     --text-light: #666;
     --border: #ddd;
     --bg: #f9f9f9;
     --white: #fff;
-    --danger: #e74c3c;
+    --danger: #000000;
 }
 
 * {
@@ -44,9 +44,99 @@ h1 {
 }
 
 .input-area {
+    margin-bottom: 25px;
+}
+
+.input-row {
     display: flex;
     gap: 10px;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
+}
+
+.input-row input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.input-row input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.input-row button {
+    padding: 12px 20px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+.input-row button:hover {
+    opacity: 0.9;
+}
+
+.options-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.category-section, .priority-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.category-section label, .priority-section label {
+    font-size: 14px;
+    color: var(--text);
+    white-space: nowrap;
+}
+
+.category-section select {
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 14px;
+    background: var(--white);
+    color: black;
+}
+
+.priority-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.priority-buttons button {
+    padding: 6px 12px;
+    font-size: 14px;
+    background: var(--white);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.priority-buttons button.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.priority-buttons button:hover {
+    background: var(--primary-light);
+}
+
+.priority-buttons button.active:hover {
+    background: var(--primary);
+    opacity: 0.9;
 }
 
 input {
@@ -169,13 +259,30 @@ ul {
     margin-top: 20px;
 }
 
-.stats p {
-    color: var(--text-light);
-    font-size: 14px;
-    padding: 10px;
-    background: var(--primary-light);
+.taskmap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    margin-bottom: 4px;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    display: inline-block;
+}
+
+.task-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.priority {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.categorydisp {
+    margin-left: auto;
+    margin-right: 16px;
 }
 
 @media (max-width: 600px) {
@@ -200,5 +307,20 @@ ul {
         flex: 0 0 auto;
         font-size: 13px;
         padding: 6px 12px;
+    }
+}
+@media (max-width: 600px) {
+    .input-row {
+        flex-direction: column;
+    }
+
+    .options-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .category-section, .priority-section {
+        width: 100%;
     }
 }
