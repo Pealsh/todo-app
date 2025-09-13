@@ -1,85 +1,108 @@
 import {useState, useMemo, useEffect} from "react";
 import './App.css';
-
+//タスクデータ構造定義
 type Task = {
-    text: string;
-    category: string;
-    priority: number;
-    done: boolean;
+    text: string;　//タスクの内容
+    category: string;  //カテゴリー
+    priority: number;  //優先度
+    done: boolean;  //完了状態
 };
-
+//フィルターの種類の定義
 type FilterType = 'all' | 'active' | 'completed';
-//データ残る処理
+//メインあぷりのコンポーネント
 function App() {
+    //ローカルストレージからタスクデータを初期化する関数
     const initializeTasks = (): Task[] => {
         try {
+        　　//ローカルストレージから保存されたタスクを取得
             const savedtasks = localStorage.getItem("todotasks");
+            //データがあればJSONをパースして返す、なかったら空白
             return savedtasks ? JSON.parse(savedtasks) : [];
         } catch (error) {
+            //エラー発生コンソールログ　
             console.error('読み込みエラー', error);
             return [];
         }
 
     };
-    const [tasks, setTasks] = useState<Task[]>(initializeTasks);
-    const [input, setInput] = useState("");
-    const [filter, setFilter] = useState<FilterType>('all');
-    const [selectedCategory, setSelectedCategory] = useState('仕事');
-    const [selectedPriority, setSelectedPriority] = useState(2);
-
+    // ===== useState フック（状態管理） =====
+    const [tasks, setTasks] = useState<Task[]>(initializeTasks); //タスクリストの状態
+    const [input, setInput] = useState(""); 　　　　　　　　　　　　//入力フィールドの状態
+    const [filter, setFilter] = useState<FilterType>('all');　　//フィルターの状態
+    const [selectedCategory, setSelectedCategory] = useState('仕事'); //カテゴリー
+    const [selectedPriority, setSelectedPriority] = useState(2);  //優先度
+　　
+　　// ===== useEffect フック（副作用処理） =====　
+　　//タスクが更新されるたびにローカルストレージに保存
     useEffect(() => {
         try {
+       　　　//タスク入れつをJSONに変換保存
             localStorage.setItem("todotasks", JSON.stringify(tasks));
+            //保存エラー
         } catch (error) {
             console.log(error);
         }
-    }, [tasks]);
+    }, [tasks]);  //タスク変更のたびに実行
+
+    // ===== タスク操作関数 =====
+
     //add
     const addTask = () => {
+        //空白の場合何もしない
         if (input.trim() === "") return;
-        setTasks([...tasks, { text: input, done: false, category:selectedCategory, priority:selectedPriority}]);
+        //新しいタスクオブジェクト作成　タスクリストについか
+        setTasks([...tasks, {
+         text: input, //入力されたテキスト
+         done: false, //初期化状態は未完了
+         category:selectedCategory,　//選択されたカテゴリー
+         priority:selectedPriority}]); //選択された優先度
+         //入力フィールドクリア
         setInput("");
     };
 
     //del
     const deleteTask = (index: number) => {
+        //filterメゾットで指定したインデックス以外残す
         setTasks(tasks.filter((_, i) => i !== index));
     };
 
     //delall
     const deleteAllTasks = () => {
+    　　 //ダイアログ表示OKが押された時のみ先じょ
         if (window.confirm('全部消すの？')) {
-            setTasks([])
+            setTasks([]) //空白列を設定して全てのタスクを削除
         }
     };
 
     //toggle
     const toggleTask = (index: number) => {
+        //既存のタスク配列コピー
         const newTasks = [...tasks];
+        //指定されたインデックスのタスク状態反転
         newTasks[index].done = !newTasks[index].done;
+        //更新されたタスク配列を状態に設定
         setTasks(newTasks);
     };
 
     //filter
     const filteredTasks = useMemo(() => {
         if (filter === 'active') {
+            //未完了タスクのみ返す
             return tasks.filter(task => !task.done);
         } else if (filter === 'completed') {
+            //完了済みタスクのみ返す
             return tasks.filter(task => task.done);
         } else {
-            return tasks;
+            //全てのタスクを返す
+            return tasks;　//tasks or filterが変更された時のみ再計算
         }
     }, [tasks, filter]);
 
-    //category
-
-    //priority
-
     //statistics
     const stats = {
-        total: tasks.length,
-        active: tasks.filter(task => !task.done).length,
-        completed: tasks.filter(task => task.done).length
+        total: tasks.length,　     //そうタスク数
+        active: tasks.filter(task => !task.done).length,  //未完了タスク数
+        completed: tasks.filter(task => task.done).length  //完了済みタスク数
     };
 
     return (
